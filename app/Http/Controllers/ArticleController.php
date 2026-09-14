@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateArticleRequest;
 use App\Models\Article;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class ArticleController extends Controller
 {
@@ -40,6 +41,7 @@ class ArticleController extends Controller
 
     public function edit(Article $article)
     {
+        Gate::authorize('update', $article);
         return view('article.edit', compact('article'));
     }
 
@@ -68,6 +70,7 @@ class ArticleController extends Controller
     public function delete(Article $article)
     {
         // Supprimer l'image associée sur le disque lors de la suppression de l'article
+        Gate::authorize('delete', $article);
         if ($article->image && Storage::disk('public')->exists($article->image)) {
             Storage::disk('public')->delete($article->image);
         }

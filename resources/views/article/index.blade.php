@@ -38,24 +38,17 @@
                         <p class="card-content">{{ Str::limit($article->contenu, 120) }}</p>
                     </div>
 
-                    @auth
-                        {{-- Afficher les actions si l'utilisateur est l'auteur OU s'il est Admin --}}
-                        @if(auth()->id() === $article->user_id || auth()->user()->role === 'admin')
-                            <div class="card-footer">
-                                <a href="{{ route('articles.edit', $article) }}" class="btn-action btn-edit">
-                                    Modifier
-                                </a>
+                        @can('update', $article)
+                            <a href="{{ route('articles.edit', $article) }}">Modifier</a>
+                        @endcan
 
-                                <form action="{{ route('articles.delete', $article) }}" method="POST" class="delete-form" onsubmit="return confirm('Voulez-vous vraiment supprimer cet article ?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn-action btn-delete">
-                                        Supprimer
-                                    </button>
-                                </form>
-                            </div>
-                        @endif
-                    @endauth
+                        @can('delete', $article)
+                            <form action="{{ route('articles.delete', $article) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit">Supprimer</button>
+                            </form>
+                        @endcan
                 </article>
             @endforeach
         </div>
